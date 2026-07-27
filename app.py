@@ -4,6 +4,21 @@ Competitor Content Watchdog — Streamlit control panel.
 import io
 import json
 import os
+import subprocess
+import sys
+
+# --- Ensure Playwright browser exists (Streamlit Cloud ships none) ---
+_BROWSER_FLAG = "/tmp/.playwright_installed"
+if not os.path.exists(_BROWSER_FLAG):
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            check=True, capture_output=True, timeout=300,
+        )
+        open(_BROWSER_FLAG, "w").close()
+    except Exception as e:
+        print(f"Playwright install at startup failed: {e}")
+# --- end browser bootstrap ---
 
 import pandas as pd
 import streamlit as st
